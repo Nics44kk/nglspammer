@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Style - NGL Message Sender</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">NGL Message Sender</h1>
+        <form id="nglForm">
+            <label for="username">NGL Username:</label>
+            <input type="text" id="username" name="nglusername" required>
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message" required>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+            <button type="submit" class="submit-btn">Send Messages</button>
+        </form>
+        <div id="response" class="response"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('nglForm');
+        const responseDiv = document.getElementById('response');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {
+                nglusername: formData.get('nglusername'),
+                message: formData.get('message'),
+                amount: formData.get('amount')
+            };
+
+            try {
+                const res = await fetch('/ngl', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await res.text();
+                responseDiv.innerHTML = result;
+                responseDiv.style.color = 'green';
+            } catch (error) {
+                responseDiv.innerHTML = "An error occurred.";
+                responseDiv.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
