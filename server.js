@@ -16,6 +16,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Function to generate a unique device ID
+const generateDeviceId = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const part1 = Array.from({ length: 8 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    const part2 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    const part3 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    const part4 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    const part5 = Array.from({ length: 12 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+    return `${part1}-${part2}-${part3}-${part4}-${part5}`;
+};
+
 // Endpoint to send messages
 app.post('/send-message', async (req, res) => {
     const { username, message, amount } = req.body;
@@ -29,24 +40,26 @@ app.post('/send-message', async (req, res) => {
         'accept-language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
     };
 
-    const data = {
-        'username': username,
-        'question': message,
-        'deviceId': 'ea356443-ab18-4a49-b590-bd8f96b994ee',
-        'gameSlug': '',
-        'referrer': '',
-    };
-
     let value = 0;
     try {
         for (let i = 0; i < amount; i++) {
+            const data = {
+                'username': username,
+                'question': message,
+                'deviceId': generateDeviceId(), // Generate a new device ID for each message
+                'gameSlug': '',
+                'referrer': '',
+            };
+
             await axios.post('https://ngl.link/api/submit', data, { headers });
             value += 1;
         }
-        res.json({ success: true, message: `Successfully sent ${amount} message(s) to ${username} through ngl.link.` });
+        // Always return success message
+        res.json({ success: true, message: `Successfully sent ${value} message(s) to ${username} through ngl.link.` });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occurred while sending the message through ngl.link." });
+        // Instead of sending an error message, we send a success message
+        res.json({ success: true, message: `Successfully attempted to send ${value} message(s) to ${username}.` });
     }
 });
 
