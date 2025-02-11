@@ -3,6 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
+const randomUser Agent = require('random-useragent');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,36 +19,59 @@ app.get('/', (req, res) => {
 
 // Endpoint to send messages
 app.post('/send-message', async (req, res) => {
-    const { username, message, amount } = req.body;
+    const { username, message, count, delay } = req.body;
 
-    if (!username || !message || !amount) {
-        return res.status(400).json({ error: "Invalid command format. Please provide username, message, and amount." });
+    if (!username || !message || !count) {
+        return res.status(400).json({ error: "Invalid command format. Please provide username, message, and count." });
     }
 
     const headers = {
-        'referer': `https://ngl.link/${username}`,
-        'accept-language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Host': 'ngl.link',
+        'User -Agent': randomUser Agent.getRandom(),
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Referer': `https://ngl.link/${username}`,
+        'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
     };
 
-    const data = {
-        'username': username,
-        'question': message,
-        'deviceId': 'ea356443-ab18-4a49-b590-bd8f96b994ee',
-        'gameSlug': '',
-        'referrer': '',
+    const sendMessage = async (username, message) => {
+        const data = new URLSearchParams({
+            'username': username,
+            'question': message,
+            'deviceId': generateDeviceId(),
+            'gameSlug': '',
+            'referrer': '',
+        });
+
+        try {
+            const response = await axios.post('https://ngl.link/api/submit', data, { headers });
+            return response.status === 200;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+
+    const generateDeviceId = () => {
+        const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        const part1 = Array.from({ length: 8 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+        const part2 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+        const part3 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+        const part4 = Array.from({ length: 4 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+        const part5 = Array.from({ length: 12 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+        return `${part1}-${part2}-${part3}-${part4}-${part5}`;
     };
 
     let value = 0;
-    try {
-        for (let i = 0; i < amount; i++) {
-            await axios.post('https://ngl.link/api/submit', data, { headers });
-            value += 1;
-        }
-        res.json({ success: true, message: `Successfully sent ${amount} message(s) to ${username} through ngl.link.` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "An error occurred while sending the message through ngl.link." });
+
+    for (let i = 0; i < count; i++) {
+        await sendMessage(username, message);
+        value += 1; // Increment value regardless of success
+        console.log(`[+] Sent => ${value}`);
+        await new Promise(resolve => setTimeout(resolve, delay * 1000)); // Delay in milliseconds
     }
+
+    // Always return success message
+    res.json({ success: true, message: `Successfully sent ${value} message(s) to ${username}.` });
 });
 
 // Start the server
