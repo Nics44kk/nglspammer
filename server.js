@@ -67,7 +67,7 @@ app.post('/send-message', async (req, res) => {
         await sendMessage(username, message);
         value += 1; // Increment value regardless of success
         console.log(`[+] Sent => ${value}`);
-        await new Promise(resolve => setTimeout(resolve, delay * 1000)); // Delay in milliseconds
+        await new Promise(resolve => setTimeout(resolve, delay * 10)); // Delay in milliseconds
     }
 
     // Always return success message
