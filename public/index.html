@@ -16,31 +16,14 @@
             <button type="submit">Send Messages</button>
         </form>
         <div id="response"></div>
-        
-        <!-- Button to unmute the audio -->
-        <button id="muteButton">Unmute</button>
     </div>
 
     <!-- Audio element for background music -->
     <audio id="backgroundMusic" autoplay loop muted>
-        <source src="https://github.com/Nics44kk/nglspammer/raw/refs/heads/main/Dionela%20-%20Marilag%20(Official%20Lyric%20Video).mp3" type="audio/mpeg">
+        <source src="https://github.com/Nics44kk/nglspammer/raw/refs/heads/main/Dionela%20-%20Marilag%20(Official%20Lyric%20Video).mp3" type="audio/mpe3">
         Your browser does not support the audio element.
     </audio>
 
-    <script src="script.js">
-        // JavaScript to handle unmuting the audio
-        const muteButton = document.getElementById('muteButton');
-        const backgroundMusic = document.getElementById('backgroundMusic');
-
-        muteButton.addEventListener('click', () => {
-            if (backgroundMusic.muted) {
-                backgroundMusic.muted = false;
-                muteButton.textContent = 'Mute';
-            } else {
-                backgroundMusic.muted = true;
-                muteButton.textContent = 'Unmute';
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
