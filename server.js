@@ -79,7 +79,7 @@ app.post('/send-message', async (req, res) => {
             notsend = 0; // Reset not sent counter
         }
 
-        await new Promise(resolve => setTimeout(resolve, delay * 10)); // Delay in milliseconds
+        await new Promise(resolve => setTimeout(resolve, delay * 1000)); // Delay in milliseconds
     }
 
     res.json({ success: true, message: `Successfully sent ${value} message(s) to ${username}.` });
