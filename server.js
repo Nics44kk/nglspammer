@@ -3,7 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
-const randomUser Agent = require('random-useragent'); // Fixed the variable name
+const randomUser agent = require('random-useragent');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +27,7 @@ app.post('/send-message', async (req, res) => {
 
     const headers = {
         'Host': 'ngl.link',
-        'User -Agent': randomUser Agent.getRandom(), // Fixed the variable name
+        'User -Agent': randomUser agent.getRandom(),
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Referer': `https://ngl.link/${username}`,
         'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -46,8 +46,8 @@ app.post('/send-message', async (req, res) => {
             const response = await axios.post('https://ngl.link/api/submit', data, { headers });
             return response.status === 200;
         } catch (error) {
-            console.error(error); // Log the error to the console
-            return false; // Return false to indicate failure without sending an error message
+            console.error(error);
+            return false;
         }
     };
 
@@ -62,15 +62,26 @@ app.post('/send-message', async (req, res) => {
     };
 
     let value = 0;
+    let notsend = 0;
 
     for (let i = 0; i < count; i++) {
-        await sendMessage(username, message);
-        value += 1; // Increment value regardless of success
-        console.log(`[+] Sent => ${value}`);
+        const sent = await sendMessage(username, message);
+        if (sent) {
+            value += 1;
+            console.log(`[+] Sent => ${value}`);
+        } else {
+            notsend += 1;
+            console.log(`[-] Not Sent`);
+        }
+
+        if (notsend === 4) {
+            console.log(`[!] Changing information`);
+            notsend = 0; // Reset not sent counter
+        }
+
         await new Promise(resolve => setTimeout(resolve, delay * 1000)); // Delay in milliseconds
     }
 
-    // Always return success message
     res.json({ success: true, message: `Successfully sent ${value} message(s) to ${username}.` });
 });
 
