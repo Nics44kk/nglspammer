@@ -3,20 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGL Message Sender</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Hacker Style - NGL Message Sender</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>NGL Message Sender</h1>
+        <h1 class="title">NGL Message Sender</h1>
         <form id="nglForm">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="text" id="message" placeholder="Message" required>
-            <input type="number" id="amount" placeholder="Amount" required>
-            <button type="submit">Send Message</button>
+            <label for="username">NGL Username:</label>
+            <input type="text" id="username" name="nglusername" required>
+            <label for="message">Message:</label>
+            <input type="text" id="message" name="message" required>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+            <button type="submit" class="submit-btn">Send Messages</button>
         </form>
-        <div id="response"></div>
+        <div id="response" class="response"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const form = document.getElementById('nglForm');
+        const responseDiv = document.getElementById('response');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Clear previous response
+            responseDiv.innerHTML = '';
+            responseDiv.style.color = '';
+
+            const formData = new FormData(form);
+            const data = {
+                nglusername: formData.get('nglusername'),
+                message: formData.get('message'),
+                amount: formData.get('amount')
+            };
+
+            try {
+                const res = await fetch('/ngl', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // Ensure we handle the response text
+                if (res.ok) {
+                    const result = await res.text();  // Get response text from server
+                    responseDiv.innerHTML = result;
+                    responseDiv.style.color = 'green'; // Success message color
+                } else {
+                    const error = await res.text();
+                    responseDiv.innerHTML = error;
+                    responseDiv.style.color = 'red'; // Error message color
+                }
+            } catch (error) {
+                responseDiv.innerHTML = "An error occurred while sending the request.";
+                responseDiv.style.color = 'red';
+            }
+        });
+    </script>
 </body>
 </html>
