@@ -46,8 +46,8 @@ app.post('/send-message', async (req, res) => {
             const response = await axios.post('https://ngl.link/api/submit', data, { headers });
             return response.status === 200;
         } catch (error) {
-            console.error(error);
-            return false;
+            console.error(error); // Log the error to the console
+            return false; // Return false to indicate failure without sending an error message
         }
     };
 
