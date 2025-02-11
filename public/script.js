@@ -1,12 +1,16 @@
 // script.js
-document.getElementById('messageForm').addEventListener('submit', async function(event) event.preventDefault();
+document.getElementById('messageForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
     const username = document.getElementById('username').value;
     const message = document.getElementById('message').value;
     const amount = document.getElementById('amount').value;
 
+    const responseDiv = document.getElementById('response');
+    responseDiv.innerHTML = '';
+
     try {
-        const response = await fetch('http://localhost:3000/send-message', {
+        const response = await fetch('/send-message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -15,8 +19,12 @@ document.getElementById('messageForm').addEventListener('submit', async function
         });
 
         const data = await response.json();
-        document.getElementById('response').innerText = data.success ? data.message : data.error;
+        if (response.ok) {
+            responseDiv.innerHTML = data.message;
+        } else {
+            responseDiv.innerHTML = data.error;
+        }
     } catch (error) {
-        document.getElementById('response').innerText = "An error occurred while sending the message.";
+        responseDiv.innerHTML = 'An error occurred while sending the message.';
     }
 });
