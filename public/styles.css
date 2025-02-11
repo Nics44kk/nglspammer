@@ -31,10 +31,18 @@ button {
     width: 100%;
     padding: 10px;
     background-color: #00ff00;
+    color: #1a1a1a;
     border: none;
     cursor: pointer;
+    font-size: 16px;
 }
 
 button:hover {
     background-color: #00cc00;
+}
+
+#response {
+    margin-top: 20px;
+    text-align: center;
+    color: #00ff00;
 }
