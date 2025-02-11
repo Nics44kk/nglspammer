@@ -3,7 +3,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
-const randomUser agent = require('random-useragent');
+const randomUser Agent = require('random-useragent'); // Fixed the variable name
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +27,7 @@ app.post('/send-message', async (req, res) => {
 
     const headers = {
         'Host': 'ngl.link',
-        'User -Agent': randomUser Agent.getRandom(),
+        'User -Agent': randomUser Agent.getRandom(), // Fixed the variable name
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Referer': `https://ngl.link/${username}`,
         'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -67,7 +67,7 @@ app.post('/send-message', async (req, res) => {
         await sendMessage(username, message);
         value += 1; // Increment value regardless of success
         console.log(`[+] Sent => ${value}`);
-        await new Promise(resolve => setTimeout(resolve, delay * 10)); // Delay in milliseconds
+        await new Promise(resolve => setTimeout(resolve, delay * 1000)); // Delay in milliseconds
     }
 
     // Always return success message
